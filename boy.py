@@ -5,10 +5,6 @@ from pico2d import load_image, get_time
 from sdl2 import SDL_KEYDOWN, SDLK_SPACE, SDLK_LEFT, SDL_KEYUP, SDLK_RIGHT, SDLK_a
 
 
-def space_down(e):
-    return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_SPACE
-
-
 def right_down(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_RIGHT
 
@@ -43,7 +39,6 @@ class Idle:
             boy.action = 3
         boy.dir = 0
         boy.frame = 0
-        boy.start_time = get_time()
 
     @staticmethod
     def exit(boy, e):
@@ -53,8 +48,6 @@ class Idle:
     def do(boy):
         print('Idle Do')
         boy.frame = (boy.frame + 1) % 8
-        if get_time() - boy.start_time > 3:
-            boy.state_machine.handle_event(('TIME_OUT', 0))
 
     @staticmethod
     def draw(boy):
@@ -94,6 +87,7 @@ class AutoRun:
             boy.dir, boy.action = -1, 0
         elif boy.action == 3:
             boy.dir, boy.action = 1, 1
+        boy.start_time = get_time()
 
     @staticmethod
     def exit(boy, e):
@@ -102,7 +96,10 @@ class AutoRun:
     @staticmethod
     def do(boy):
         boy.frame = (boy.frame + 1) % 8
-        boy.x += boy.dir * 10
+        # boy.x += boy.dir * 10
+        boy.x += boy.dir
+        if get_time() - boy.start_time > 1:
+            boy.state_machine.handle_event(('TIME_OUT', None))
 
     @staticmethod
     def draw(boy):
