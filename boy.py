@@ -90,10 +90,10 @@ class Run:
 class AutoRun:
     @staticmethod
     def enter(boy, e):
-        if right_down(e) or left_up(e):
-            boy.dir, boy.action = 1, 1
-        elif left_down(e) or right_up(e):
+        if boy.action == 2:
             boy.dir, boy.action = -1, 0
+        elif boy.action == 3:
+            boy.dir, boy.action = 1, 1
 
     @staticmethod
     def exit(boy, e):
@@ -108,7 +108,7 @@ class AutoRun:
     def draw(boy):
         boy.image.clip_draw(boy.frame * 100, boy.action * 100,
                             100, 100,
-                            boy.x, boy.y,
+                            boy.x, boy.y+32,
                             200, 200)
 
 
@@ -116,7 +116,6 @@ class StateMachine:
     def __init__(self, boy):
         self.boy = boy
         self.cur_state = Idle
-        # self.cur_state = Sleep
         self.table = {
             Idle: {right_down: Run, left_down: Run, right_up: Run, left_up: Run, a_down: AutoRun},
             Run: {right_down: Idle, left_down: Idle, right_up: Idle, left_up: Idle},
